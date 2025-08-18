@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "poker-no-gui/1.0.0": {
+        "runtime": {
+          "poker-no-gui.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "poker-no-gui/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

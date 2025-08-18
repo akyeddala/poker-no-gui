@@ -1,0 +1,14 @@
+C:\Users\AK_Y\OneDrive\Documents\PersonalProjects\poker-no-gui\poker-no-gui\bin\Debug\net8.0\poker-no-gui.exe
+C:\Users\AK_Y\OneDrive\Documents\PersonalProjects\poker-no-gui\poker-no-gui\bin\Debug\net8.0\poker-no-gui.deps.json
+C:\Users\AK_Y\OneDrive\Documents\PersonalProjects\poker-no-gui\poker-no-gui\bin\Debug\net8.0\poker-no-gui.runtimeconfig.json
+C:\Users\AK_Y\OneDrive\Documents\PersonalProjects\poker-no-gui\poker-no-gui\bin\Debug\net8.0\poker-no-gui.dll
+C:\Users\AK_Y\OneDrive\Documents\PersonalProjects\poker-no-gui\poker-no-gui\bin\Debug\net8.0\poker-no-gui.pdb
+C:\Users\AK_Y\OneDrive\Documents\PersonalProjects\poker-no-gui\poker-no-gui\obj\Debug\net8.0\poker-no-gui.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\AK_Y\OneDrive\Documents\PersonalProjects\poker-no-gui\poker-no-gui\obj\Debug\net8.0\poker-no-gui.AssemblyInfoInputs.cache
+C:\Users\AK_Y\OneDrive\Documents\PersonalProjects\poker-no-gui\poker-no-gui\obj\Debug\net8.0\poker-no-gui.AssemblyInfo.cs
+C:\Users\AK_Y\OneDrive\Documents\PersonalProjects\poker-no-gui\poker-no-gui\obj\Debug\net8.0\poker-no-gui.csproj.CoreCompileInputs.cache
+C:\Users\AK_Y\OneDrive\Documents\PersonalProjects\poker-no-gui\poker-no-gui\obj\Debug\net8.0\poker-no-gui.dll
+C:\Users\AK_Y\OneDrive\Documents\PersonalProjects\poker-no-gui\poker-no-gui\obj\Debug\net8.0\refint\poker-no-gui.dll
+C:\Users\AK_Y\OneDrive\Documents\PersonalProjects\poker-no-gui\poker-no-gui\obj\Debug\net8.0\poker-no-gui.pdb
+C:\Users\AK_Y\OneDrive\Documents\PersonalProjects\poker-no-gui\poker-no-gui\obj\Debug\net8.0\poker-no-gui.genruntimeconfig.cache
+C:\Users\AK_Y\OneDrive\Documents\PersonalProjects\poker-no-gui\poker-no-gui\obj\Debug\net8.0\ref\poker-no-gui.dll
