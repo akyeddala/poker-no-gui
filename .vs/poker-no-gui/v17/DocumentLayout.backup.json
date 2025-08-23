@@ -3,8 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\AK_Y\\OneDrive\\Documents\\PersonalProjects\\poker-no-gui\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\AK_Y\\OneDrive\\Documents\\PersonalProjects\\poker-no-gui\\poker-no-gui\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:poker-no-gui\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1EAE19AF-22E2-4BF9-A908-7B364891C686}|poker-no-gui\\poker-no-gui.csproj|c:\\users\\ak_y\\onedrive\\documents\\personalprojects\\poker-no-gui\\poker-no-gui\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1EAE19AF-22E2-4BF9-A908-7B364891C686}|poker-no-gui\\poker-no-gui.csproj|solutionrelative:poker-no-gui\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{549078D1-F38D-47BE-B340-51D1A9DFBE7D}|poker-no-gui.Tests\\poker-no-gui.Tests.csproj|c:\\users\\ak_y\\onedrive\\documents\\personalprojects\\poker-no-gui\\poker-no-gui.tests\\unittest1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{549078D1-F38D-47BE-B340-51D1A9DFBE7D}|poker-no-gui.Tests\\poker-no-gui.Tests.csproj|solutionrelative:poker-no-gui.tests\\unittest1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,8 +18,33 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 4,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "UnitTest1.cs",
+              "DocumentMoniker": "C:\\Users\\AK_Y\\OneDrive\\Documents\\PersonalProjects\\poker-no-gui\\poker-no-gui.Tests\\UnitTest1.cs",
+              "RelativeDocumentMoniker": "poker-no-gui.Tests\\UnitTest1.cs",
+              "ToolTip": "C:\\Users\\AK_Y\\OneDrive\\Documents\\PersonalProjects\\poker-no-gui\\poker-no-gui.Tests\\UnitTest1.cs",
+              "RelativeToolTip": "poker-no-gui.Tests\\UnitTest1.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-23T01:17:42.063Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -24,14 +53,10 @@
               "RelativeDocumentMoniker": "poker-no-gui\\Program.cs",
               "ToolTip": "C:\\Users\\AK_Y\\OneDrive\\Documents\\PersonalProjects\\poker-no-gui\\poker-no-gui\\Program.cs",
               "RelativeToolTip": "poker-no-gui\\Program.cs",
-              "ViewState": "AgIAAF8AAAAAAAAAAAAUwHEAAAAiAAAAAAAAAA==",
+              "ViewState": "AgIAAB0AAAAAAAAAAAAQwHgAAABUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-18T06:21:54.585Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{56df62a4-05a3-4e5b-aa1a-99371ccfb997}"
             }
           ]
         }
