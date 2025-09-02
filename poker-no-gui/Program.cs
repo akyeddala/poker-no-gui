@@ -30,16 +30,16 @@ namespace PokerGame {
     }
 
     public class Card {
-        public Rank rank;
-        public Suit suit;
+        public Rank Rank;
+        public Suit Suit;
 
         public Card(Rank rank, Suit suit) {
-            this.rank = rank;
-            this.suit = suit;
+            this.Rank = rank;
+            this.Suit = suit;
         }
 
         public override string ToString() {
-            return $"{rank} of {suit}";
+            return $"{Rank} of {Suit}";
         }
     }
 
@@ -104,7 +104,7 @@ namespace PokerGame {
             this.Cards = new List<Card>(cards);
         }
 
-        //Equality check for two hands in specific order
+        //Equality check for two hands
         public static bool IsEqual(Hand? first, Hand? second) {
             if (ReferenceEquals(first, null) && ReferenceEquals(second, null)) {
                 return true;
@@ -119,42 +119,147 @@ namespace PokerGame {
             if (first.Cards.Count != second.Cards.Count)
                 return false;
 
-            List<Card> fCards = new List<Card>(first.Cards);
-            List<Card> sCards = new List<Card>(second.Cards);
-            switch (first.Name) {
-                //check rank and suit of all cards
-                case Hands.RoyalFlush:
-                case Hands.StraightFlush:
-                case Hands.Flush: {
-                        fCards.Sort((a, b) => b.suit - a.suit);
-                        sCards.Sort((a, b) => b.suit - a.suit);
-                        fCards.Sort((a, b) => b.rank - a.rank);
-                        sCards.Sort((a, b) => b.rank - a.rank);
-                        for (int i = 0; i < first.Cards.Count; i++) {
-                            if (first.Cards[i].rank != second.Cards[i].rank || first.Cards[i].suit != second.Cards[i].suit)
-                                return false;
+            return CompareHands(first, second) == 0;
+        }
+
+        //Compares Two Best 5-Card (or less, if applicable) Hands (already gone through GetHand),
+        //Returns negative if a is loses to b, 0 if a ties with b, positive if a beats b
+        public static int CompareHands (Hand a, Hand b) {
+            int comp = a.Name - b.Name;
+            if (comp != 0)
+                return comp;
+            else {
+                switch (a.Name) {
+                    case Hands.RoyalFlush:
+                        return 0;
+                    case Hands.StraightFlush:
+                    case Hands.Straight:
+                        return a.Cards[0].Rank - b.Cards[0].Rank;
+                    case Hands.Flush: {
+                        for (int i = 0; i < a.Cards.Count; i++) {
+                            comp = a.Cards[i].Rank - b.Cards[i].Rank;
+                            if (comp != 0)
+                                return comp;
+                            else
+                                continue;
                         }
-                        return true;
+                        return 0;
                     }
-                //check only rank of all cards
-                case Hands.Straight:
-                case Hands.HighCard:
-                case Hands.FourOfAKind:
-                case Hands.FullHouse:
-                case Hands.ThreeOfAKind:
-                case Hands.TwoPair:
-                case Hands.OnePair: {
-                        fCards.Sort((a, b) => b.rank - a.rank);
-                        sCards.Sort((a, b) => b.rank - a.rank);
-                        for (int i = 0; i < first.Cards.Count; i++) {
-                            if (first.Cards[i].rank != second.Cards[i].rank)
-                                return false;
+                    case Hands.FourOfAKind: {
+                        comp = a.Cards[0].Rank - b.Cards[0].Rank;
+                        if (comp != 0)
+                            return comp;
+                        else {
+                            if (a.Cards.Count == 5)
+                                return a.Cards[4].Rank - b.Cards[4].Rank;
+                            else
+                                return 0;
                         }
-                        return true;
                     }
-                default:
-                    return false;
+                    case Hands.FullHouse: {
+                        comp = a.Cards[0].Rank - b.Cards[0].Rank;
+                        if (comp != 0)
+                            return comp;
+                        else
+                            return a.Cards[3].Rank - b.Cards[3].Rank;
+                    }
+                    case Hands.ThreeOfAKind: {
+                        comp = a.Cards[0].Rank - b.Cards[0].Rank;
+                        if (comp != 0)
+                            return comp;
+                        else {
+                            if (a.Cards.Count > 3) {
+                                for (int i = 3; i < a.Cards.Count; i++) {
+                                    comp = a.Cards[i].Rank - b.Cards[i].Rank;
+                                    if (comp != 0)
+                                        return comp;
+                                }
+                                return 0;
+                            }     
+                            else
+                                return 0;
+                        }
+                    }
+                    case Hands.TwoPair: {
+                        comp = a.Cards[0].Rank - b.Cards[0].Rank;
+                        if (comp != 0)
+                            return comp;
+                        else {
+                            comp = a.Cards[2].Rank - b.Cards[2].Rank;
+                            if (comp != 0)
+                                return comp;
+                            else {
+                                if (a.Cards.Count == 5)
+                                    return a.Cards[4].Rank - b.Cards[4].Rank;
+                                else
+                                    return 0;
+                            }
+                        }
+                    }
+                    case Hands.OnePair: {
+                        comp = a.Cards[0].Rank - b.Cards[0].Rank;
+                        if (comp != 0)
+                            return comp;
+                        else {
+                            if (a.Cards.Count > 2) {
+                                for (int i = 2; i < a.Cards.Count; i++) {
+                                    comp = a.Cards[i].Rank - b.Cards[i].Rank;
+                                    if (comp != 0)
+                                        return comp;
+                                }
+                                return 0;
+                            }
+                            else
+                                return 0;
+                        }
+                    }
+                    case Hands.HighCard: {
+                        for (int i = 0; i < a.Cards.Count; i++) {
+                            comp = a.Cards[i].Rank - b.Cards[i].Rank;
+                            if (comp != 0)
+                                return comp;
+                        }
+                        return 0;
+                    }
+                    default:
+                        throw new ArgumentException("Hand(s) is (are) invalid");
+                }
             }
+        }
+
+        public override string ToString() {
+            string specName = "";
+            switch (Name) {
+                case Hands.RoyalFlush:
+                    specName = "Royal Flush";
+                    break;
+                case Hands.StraightFlush:
+                    specName = $"Straight Flush, {Cards[0].Rank} High";
+                    break;
+                case Hands.FourOfAKind:
+                    specName = $"Four of a Kind, {Cards[0].Rank}s";
+                    break;
+                case Hands.FullHouse:
+                    specName = $"Full House, {Cards[0].Rank}s full of {Cards[4].Rank}s";
+                    break;
+                case Hands.ThreeOfAKind:
+                    specName = $"Three of a Kind, {Cards[0].Rank}s";
+                    break;
+                case Hands.Straight:
+                case Hands.Flush:
+                    specName = $"{Name}, {Cards[0].Rank} High";
+                    break;
+                case Hands.TwoPair:
+                    specName = $"Two Pair, {Cards[0].Rank}s and {Cards[2].Rank}s";
+                    break;
+                case Hands.OnePair:
+                    specName = $"Pair, {Cards[0].Rank}s";
+                    break;
+                case Hands.HighCard:
+                    specName = $"High Card, {Cards[0].Rank} High";
+                    break;
+            }
+            return $"Hand: {specName}\n{string.Join("\n", Cards)}";
         }
     }
 
@@ -165,16 +270,41 @@ namespace PokerGame {
             // Initialize game components here
             // For example, create a deck of cards, shuffle them, deal cards to players, etc.
             // Placeholder for game logic
+            int numPlayers = -1;
+            while (numPlayers == -1) {
+                Console.WriteLine("Enter number of players (between 2 and 10): ");
+                string? numP = Console.ReadLine();
+                if (numP != null && Int32.TryParse(numP, out numPlayers)) {
+                    Console.WriteLine("Great! We'll begin with " + numPlayers + " players!");
+                }
+                else {
+                    Console.WriteLine("Sorry! That's not a valid number. Please try again!");
+                }
+            }
 
-            Console.WriteLine("Initializing game components...");
+            List<string> playerNames = new List<string>();
+            while (playerNames.Count < numPlayers) {
+                Console.WriteLine("Please enter a name for Player " + (playerNames.Count + 1) + ":");
+                string? pName = Console.ReadLine();
+                if (pName != null)
+                    playerNames.Add(pName);
+                else
+                    Console.WriteLine("Sorry! That name is invalid. Please try again!");
+            }
+
+            Console.WriteLine("Great! Initializing game components...");
+            Deck playDeck = new Deck();
+            List<List<Card>> playerCards = new List<List<Card>>();
+            //TODO: Implement betting and dealing and all that jazz
+
 
             PlayGame();
         }
 
-        public static Hand GetHand(List<Card> cards) {
+        public static Hand GetBestHand(List<Card> cards) {
 
             List<Card> sortedCards = new List<Card>(cards);
-            sortedCards.Sort((a, b) => b.rank - a.rank);
+            sortedCards.Sort((a, b) => b.Rank - a.Rank);
             Hand? resultHand = null;
 
             if (sortedCards.Count >= 5) {
@@ -230,7 +360,7 @@ namespace PokerGame {
 
             static Hand? getBestRoyalFlush(List<Card> checkCards) {
                 Hand? bestRF = getBestStraightFlush(checkCards);
-                if (bestRF != null && bestRF.Cards[0].rank == Rank.Ace) {
+                if (bestRF != null && bestRF.Cards[0].Rank == Rank.Ace) {
                     bestRF.Name = Hands.RoyalFlush;
                     return bestRF;
                 }
@@ -239,12 +369,12 @@ namespace PokerGame {
 
             static Hand? getBestStraightFlush(List<Card> checkCards) {
                 List<Card> checkStraightFlush = new List<Card>(checkCards);
-                checkStraightFlush.Sort((a, b) => a.suit - b.suit);
+                checkStraightFlush.Sort((a, b) => a.Suit - b.Suit);
                 for (int i = 0; i < checkStraightFlush.Count - 4; i++) {
                     List<Card> flush = new List<Card>() { checkStraightFlush[i] };
-                    Suit currSuit = checkStraightFlush[i].suit;
+                    Suit currSuit = checkStraightFlush[i].Suit;
                     for (int j = i + 1; j < checkStraightFlush.Count; j++) {
-                        if (checkStraightFlush[j].suit == currSuit)
+                        if (checkStraightFlush[j].Suit == currSuit)
                             flush.Add(checkStraightFlush[j]);
                         else
                             break;
@@ -262,7 +392,7 @@ namespace PokerGame {
 
             static Hand? getBestFourOfAKind(List<Card> checkCards) {
                 for (int i = 0; i < checkCards.Count - 3; i++) {
-                    if (checkCards[i].rank == checkCards[i + 1].rank && checkCards[i].rank == checkCards[i + 2].rank && checkCards[i].rank == checkCards[i + 3].rank) {
+                    if (checkCards[i].Rank == checkCards[i + 1].Rank && checkCards[i].Rank == checkCards[i + 2].Rank && checkCards[i].Rank == checkCards[i + 3].Rank) {
                         List<Card> four = new List<Card>() { checkCards[i], checkCards[i + 1], checkCards[i + 2], checkCards[i + 3] };
                         List<Card> kickers = new List<Card>(checkCards);
                         kickers.Remove(checkCards[i]);
@@ -279,7 +409,7 @@ namespace PokerGame {
 
             static Hand? getBestFullHouse(List<Card> checkCards) {
                 for (int i = 0; i < checkCards.Count - 2; i++) {
-                    if (checkCards[i].rank == checkCards[i + 1].rank && checkCards[i].rank == checkCards[i + 2].rank) {
+                    if (checkCards[i].Rank == checkCards[i + 1].Rank && checkCards[i].Rank == checkCards[i + 2].Rank) {
                         List<Card> full = new List<Card>() { checkCards[i], checkCards[i + 1], checkCards[i + 2] };
                         List<Card>? kickers = new List<Card>(checkCards);
                         kickers.Remove(checkCards[i]);
@@ -287,7 +417,7 @@ namespace PokerGame {
                         kickers.Remove(checkCards[i + 2]);
 
                         for (int j = 0; j < kickers.Count - 1; j++) {
-                            if (kickers[j].rank == kickers[j + 1].rank) {
+                            if (kickers[j].Rank == kickers[j + 1].Rank) {
                                 full.Add(kickers[i]);
                                 full.Add(kickers[i + 1]);
                                 return new Hand(Hands.FullHouse, full);
@@ -300,12 +430,12 @@ namespace PokerGame {
 
             static Hand? getBestFlush(List<Card> checkCards) {
                 List<Card> checkFlush = new List<Card>(checkCards);
-                checkFlush.Sort((a, b) => a.suit - b.suit);
+                checkFlush.Sort((a, b) => a.Suit - b.Suit);
                 for (int i = 0; i < checkFlush.Count - 4; i++) {
                     List<Card> flush = new List<Card>() { checkFlush[i] };
-                    Suit currSuit = checkFlush[0].suit;
+                    Suit currSuit = checkFlush[0].Suit;
                     for (int j = i + 1; j < i + 5; j++) {
-                        if (checkFlush[j].suit == currSuit)
+                        if (checkFlush[j].Suit == currSuit)
                             flush.Add(checkFlush[j]);
                     }
                     if (flush.Count == 5)
@@ -317,7 +447,7 @@ namespace PokerGame {
             static Hand? getBestStraight(List<Card> checkCards) {
                 List<Card> checkStraight = new List<Card>(checkCards);
                 for (int i = 0; i < checkCards.Count; i++) {
-                    if (checkCards[i].rank == Rank.Ace)
+                    if (checkCards[i].Rank == Rank.Ace)
                         checkStraight.Add(checkCards[i]);
                     else
                         break;
@@ -325,13 +455,13 @@ namespace PokerGame {
 
                 for (int i = 0; i < checkStraight.Count - 4; i++) {
                     List<Card> straight = new List<Card>() { checkStraight[i] };
-                    Rank lastRank = checkStraight[i].rank;
+                    Rank lastRank = checkStraight[i].Rank;
                     for (int j = i + 1; j < checkStraight.Count; j++) {
-                        if (checkStraight[j].rank == lastRank)
+                        if (checkStraight[j].Rank == lastRank)
                             continue;
-                        else if (checkStraight[j].rank == lastRank - 1 || checkStraight[j].rank == lastRank + 12) {
+                        else if (checkStraight[j].Rank == lastRank - 1 || checkStraight[j].Rank == lastRank + 12) {
                             straight.Add(checkStraight[j]);
-                            lastRank = checkStraight[j].rank;
+                            lastRank = checkStraight[j].Rank;
                         }
                         else
                             break;
@@ -345,14 +475,14 @@ namespace PokerGame {
 
             static Hand? getBestThreeOfAKind(List<Card> checkCards) {
                 for (int i = 0; i < checkCards.Count - 2; i++) {
-                    if (checkCards[i].rank == checkCards[i + 1].rank && checkCards[i].rank == checkCards[i + 2].rank) {
+                    if (checkCards[i].Rank == checkCards[i + 1].Rank && checkCards[i].Rank == checkCards[i + 2].Rank) {
                         List<Card> three = new List<Card>() { checkCards[i], checkCards[i + 1], checkCards[i + 2] };
                         List<Card> kickers = new List<Card>(checkCards);
                         kickers.Remove(checkCards[i]);
                         kickers.Remove(checkCards[i + 1]);
                         kickers.Remove(checkCards[i + 2]);
                         if (kickers.Count > 0)
-                            kickers = kickers.GetRange(0, kickers.Count >= 2 ? 2 : kickers.Count - 1);
+                            kickers = kickers.GetRange(0, kickers.Count >= 2 ? 2 : kickers.Count);
                         three.AddRange(kickers);
                         return new Hand(Hands.ThreeOfAKind, three);
                     }
@@ -363,7 +493,7 @@ namespace PokerGame {
             static Hand? getBestTwoPair(List<Card> checkCards) {
                 List<Card>? pairs = null;
                 for (int i = 0; i < checkCards.Count - 1; i++) {
-                    if (checkCards[i].rank == checkCards[i + 1].rank) {
+                    if (checkCards[i].Rank == checkCards[i + 1].Rank) {
                         if (pairs == null) {
                             pairs = new List<Card>() { checkCards[i], checkCards[i + 1] };
                             i++;
@@ -386,12 +516,12 @@ namespace PokerGame {
 
             static Hand? getBestPair(List<Card> checkCards) {
                 for (int i = 0; i < checkCards.Count - 1; i++) {
-                    if (checkCards[i].rank == checkCards[i + 1].rank) {
+                    if (checkCards[i].Rank == checkCards[i + 1].Rank) {
                         List<Card> pair = new List<Card>() { checkCards[i], checkCards[i + 1] };
                         List<Card> kickers = new List<Card>(checkCards);
                         kickers.Remove(checkCards[i]);
                         kickers.Remove(checkCards[i + 1]);
-                        kickers = kickers.GetRange(0, kickers.Count >= 3 ? 3 : kickers.Count - 1);
+                        kickers = kickers.GetRange(0, kickers.Count >= 3 ? 3 : kickers.Count);
                         pair.AddRange(kickers);
 
                         return new Hand(Hands.OnePair, pair);
@@ -400,11 +530,57 @@ namespace PokerGame {
                 return null;
             }
             static Hand getBestHighCard(List<Card> checkCards) {
-                List<Card> result = checkCards.GetRange(0, checkCards.Count >= 5 ? 5 : checkCards.Count - 1);
+                List<Card> result = checkCards.GetRange(0, checkCards.Count >= 5 ? 5 : checkCards.Count);
                 return new Hand(Hands.HighCard, result);
             }
         }
 
+        //Returns list of player numbers with winning hands (players 1 to n)
+        public static List<int> GetWinningHand(List<List<Card>> playerCards) {
+            List<Hand> playerHands = new List<Hand>();
+            int highest = -1;
+            List<int> best = new List<int>();
+            int currPlayer = 0;
+
+            foreach (List<Card> player in playerCards) {
+                currPlayer++;
+                Hand currHand = GetBestHand(player);
+                playerHands.Add(currHand);
+                if ((int)currHand.Name > highest) {
+                    highest = (int)currHand.Name;
+                    best = new List<int>();
+                    best.Add(currPlayer);
+                }
+                else if ((int)currHand.Name == highest)
+                    best.Add(currPlayer);
+                else
+                    continue;
+            }
+
+            //Case of one winner
+            if (best.Count == 1)
+                return best;
+            //Case of two or more players with the same type of hand
+            else {
+                Hand currBest = playerHands[best[0] - 1];
+                List<int> newBest = new List<int>();
+                newBest.Add(best[0]);
+                for ( int i = 1; i < best.Count; i++ ) {
+                    int comp = Hand.CompareHands(currBest, playerHands[best[i] - 1]);
+                    if (comp < 0) {
+                        currBest = playerHands[best[i] - 1];
+                        newBest = new List<int>();
+                        newBest.Add(best[i]);
+                    }
+                    else if (comp == 0) {
+                        newBest.Add(best[i]);
+                    }
+                    else
+                        continue;
+                }
+                return newBest;
+            }
+        }
 
         static void PlayGame() {
             // Implement the game logic here
