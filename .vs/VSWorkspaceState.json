@@ -1,6 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\poker-no-gui",
+    "\\poker-no-gui.Tests"
   ],
+  "SelectedNode": "\\poker-no-gui.sln",
   "PreviewInSolutionExplorer": false
 }

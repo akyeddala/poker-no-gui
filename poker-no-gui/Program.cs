@@ -98,12 +98,63 @@ namespace PokerGame {
     public class Hand {
         public Hands Name { get; set; }
         public List<Card> Cards { get; }
-        public List<Card>? Kicker { get; }
 
-        public Hand(Hands name, List<Card> cards, List<Card>? kicker = null) {
+        public Hand(Hands name, List<Card> cards) {
             this.Name = name;
             this.Cards = new List<Card>(cards);
-            this.Kicker = kicker;
+        }
+
+        //Equality check for two hands in specific order
+        public static bool IsEqual(Hand? first, Hand? second) {
+            if (ReferenceEquals(first, null) && ReferenceEquals(second, null)) {
+                return true;
+            }
+            if (ReferenceEquals(first, null) || ReferenceEquals(second, null)) {
+                return false;
+            }
+            if (ReferenceEquals(first, second))
+                return true;
+            if (first.Name != second.Name)
+                return false;
+            if (first.Cards.Count != second.Cards.Count)
+                return false;
+
+            List<Card> fCards = new List<Card>(first.Cards);
+            List<Card> sCards = new List<Card>(second.Cards);
+            switch (first.Name) {
+                //check rank and suit of all cards
+                case Hands.RoyalFlush:
+                case Hands.StraightFlush:
+                case Hands.Flush: {
+                        fCards.Sort((a, b) => b.suit - a.suit);
+                        sCards.Sort((a, b) => b.suit - a.suit);
+                        fCards.Sort((a, b) => b.rank - a.rank);
+                        sCards.Sort((a, b) => b.rank - a.rank);
+                        for (int i = 0; i < first.Cards.Count; i++) {
+                            if (first.Cards[i].rank != second.Cards[i].rank || first.Cards[i].suit != second.Cards[i].suit)
+                                return false;
+                        }
+                        return true;
+                    }
+                //check only rank of all cards
+                case Hands.Straight:
+                case Hands.HighCard:
+                case Hands.FourOfAKind:
+                case Hands.FullHouse:
+                case Hands.ThreeOfAKind:
+                case Hands.TwoPair:
+                case Hands.OnePair: {
+                        fCards.Sort((a, b) => b.rank - a.rank);
+                        sCards.Sort((a, b) => b.rank - a.rank);
+                        for (int i = 0; i < first.Cards.Count; i++) {
+                            if (first.Cards[i].rank != second.Cards[i].rank)
+                                return false;
+                        }
+                        return true;
+                    }
+                default:
+                    return false;
+            }
         }
     }
 
@@ -119,6 +170,7 @@ namespace PokerGame {
 
             PlayGame();
         }
+
         public static Hand GetHand(List<Card> cards) {
 
             List<Card> sortedCards = new List<Card>(cards);
@@ -174,7 +226,7 @@ namespace PokerGame {
 
 
 
-
+            // Helper functions to evaluate different hands
 
             static Hand? getBestRoyalFlush(List<Card> checkCards) {
                 Hand? bestRF = getBestStraightFlush(checkCards);
@@ -185,16 +237,17 @@ namespace PokerGame {
                 return null;
             }
 
-
             static Hand? getBestStraightFlush(List<Card> checkCards) {
                 List<Card> checkStraightFlush = new List<Card>(checkCards);
                 checkStraightFlush.Sort((a, b) => a.suit - b.suit);
                 for (int i = 0; i < checkStraightFlush.Count - 4; i++) {
                     List<Card> flush = new List<Card>() { checkStraightFlush[i] };
-                    Suit currSuit = checkStraightFlush[0].suit;
+                    Suit currSuit = checkStraightFlush[i].suit;
                     for (int j = i + 1; j < checkStraightFlush.Count; j++) {
                         if (checkStraightFlush[j].suit == currSuit)
                             flush.Add(checkStraightFlush[j]);
+                        else
+                            break;
                     }
                     if (flush.Count >= 5) {
                         Hand? result = getBestStraight(flush);
@@ -210,19 +263,15 @@ namespace PokerGame {
             static Hand? getBestFourOfAKind(List<Card> checkCards) {
                 for (int i = 0; i < checkCards.Count - 3; i++) {
                     if (checkCards[i].rank == checkCards[i + 1].rank && checkCards[i].rank == checkCards[i + 2].rank && checkCards[i].rank == checkCards[i + 3].rank) {
-                        List<Card> pair = new List<Card>() { checkCards[i], checkCards[i + 1], checkCards[i + 2] };
-                        List<Card>? kickers = new List<Card>(checkCards);
+                        List<Card> four = new List<Card>() { checkCards[i], checkCards[i + 1], checkCards[i + 2], checkCards[i + 3] };
+                        List<Card> kickers = new List<Card>(checkCards);
                         kickers.Remove(checkCards[i]);
                         kickers.Remove(checkCards[i + 1]);
                         kickers.Remove(checkCards[i + 2]);
                         kickers.Remove(checkCards[i + 3]);
-                        if (kickers.Count == 0) {
-                            kickers = null;
-                        }
-                        else {
-                            kickers = kickers.GetRange(0, 1);
-                        }
-                        return new Hand(Hands.FourOfAKind, pair, kickers);
+                        if (kickers.Count > 0)
+                            four.Add(kickers[0]);
+                        return new Hand(Hands.FourOfAKind, four);
                     }
                 }
                 return null;
@@ -238,9 +287,9 @@ namespace PokerGame {
                         kickers.Remove(checkCards[i + 2]);
 
                         for (int j = 0; j < kickers.Count - 1; j++) {
-                            if (checkCards[j].rank == checkCards[j + 1].rank) {
-                                full.Add(checkCards[i]);
-                                full.Add(checkCards[i + 1]);
+                            if (kickers[j].rank == kickers[j + 1].rank) {
+                                full.Add(kickers[i]);
+                                full.Add(kickers[i + 1]);
                                 return new Hand(Hands.FullHouse, full);
                             }
                         }
@@ -255,7 +304,7 @@ namespace PokerGame {
                 for (int i = 0; i < checkFlush.Count - 4; i++) {
                     List<Card> flush = new List<Card>() { checkFlush[i] };
                     Suit currSuit = checkFlush[0].suit;
-                    for (int j = i + 1; j < i + 4; j++) {
+                    for (int j = i + 1; j < i + 5; j++) {
                         if (checkFlush[j].suit == currSuit)
                             flush.Add(checkFlush[j]);
                     }
@@ -298,17 +347,14 @@ namespace PokerGame {
                 for (int i = 0; i < checkCards.Count - 2; i++) {
                     if (checkCards[i].rank == checkCards[i + 1].rank && checkCards[i].rank == checkCards[i + 2].rank) {
                         List<Card> three = new List<Card>() { checkCards[i], checkCards[i + 1], checkCards[i + 2] };
-                        List<Card>? kickers = new List<Card>(checkCards);
+                        List<Card> kickers = new List<Card>(checkCards);
                         kickers.Remove(checkCards[i]);
                         kickers.Remove(checkCards[i + 1]);
                         kickers.Remove(checkCards[i + 2]);
-                        if (kickers.Count == 0) {
-                            kickers = null;
-                        }
-                        else {
+                        if (kickers.Count > 0)
                             kickers = kickers.GetRange(0, kickers.Count >= 2 ? 2 : kickers.Count - 1);
-                        }
-                        return new Hand(Hands.ThreeOfAKind, three, kickers);
+                        three.AddRange(kickers);
+                        return new Hand(Hands.ThreeOfAKind, three);
                     }
                 }
                 return null;
@@ -325,17 +371,13 @@ namespace PokerGame {
                         else {
                             pairs.Add(checkCards[i]);
                             pairs.Add(checkCards[i + 1]);
-                            List<Card>? kickers = new List<Card>(checkCards);
+                            List<Card> kickers = new List<Card>(checkCards);
                             for (int j = 0; j < 4; j++) {
                                 kickers.Remove(pairs[j]);
                             }
-                            if (kickers.Count == 0) {
-                                kickers = null;
-                            }
-                            else {
-                                kickers = kickers.GetRange(0, 1);
-                            }
-                            return new Hand(Hands.TwoPair, pairs, kickers);
+                            if (kickers.Count > 0)
+                                pairs.Add(kickers[0]);
+                            return new Hand(Hands.TwoPair, pairs);
                         }
                     }
                 }

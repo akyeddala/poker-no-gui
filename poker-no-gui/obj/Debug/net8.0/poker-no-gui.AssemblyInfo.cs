@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("poker-no-gui")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+20e3ee95c6256d689fc1ef85d069e197d3eda2f0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7ffac8d4bb6a0bc3d105bf7cf169d20708ecf574")]
 [assembly: System.Reflection.AssemblyProductAttribute("poker-no-gui")]
 [assembly: System.Reflection.AssemblyTitleAttribute("poker-no-gui")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

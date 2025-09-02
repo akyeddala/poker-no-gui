@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\AK_Y\\OneDrive\\Documents\\PersonalProjects\\poker-no-gui\\poker-no-gui\\poker-no-gui.csproj",
+      "projectUniqueName": "C:\\Users\\AK_Y\\OneDrive\\Documents\\Projects\\PokerGame\\poker-no-gui\\poker-no-gui\\poker-no-gui.csproj",
       "projectName": "poker-no-gui",
-      "projectPath": "C:\\Users\\AK_Y\\OneDrive\\Documents\\PersonalProjects\\poker-no-gui\\poker-no-gui\\poker-no-gui.csproj",
+      "projectPath": "C:\\Users\\AK_Y\\OneDrive\\Documents\\Projects\\PokerGame\\poker-no-gui\\poker-no-gui\\poker-no-gui.csproj",
       "packagesPath": "C:\\Users\\AK_Y\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\AK_Y\\OneDrive\\Documents\\PersonalProjects\\poker-no-gui\\poker-no-gui\\obj\\",
+      "outputPath": "C:\\Users\\AK_Y\\OneDrive\\Documents\\Projects\\PokerGame\\poker-no-gui\\poker-no-gui\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -72,7 +72,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
