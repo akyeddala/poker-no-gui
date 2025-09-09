@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Transactions;
 
+
+//TODO: Add documentation
+
 namespace PokerGame {
 
     public enum Suit {
@@ -263,6 +266,49 @@ namespace PokerGame {
         }
     }
 
+    public class Player {
+        //TODO: Add support for option to preselect turn action (e.g. check/fold, call any, fold, raise xx)
+
+        public string Name { get; set; }
+        public int ID { get; }
+
+        //Folded, All-in, 
+        public string State { get; set; }
+        
+        public List<Card> Cards { get; set; }
+
+        public int Chips { get; }
+
+        public bool Sitting { get; set; }
+
+        //-1 for no action, 0 for check/fold, chip amount otherwise
+        public int CurrentBet { get; set; }
+
+        public Player(string Name, int ID, string State, int Chips = 10000, bool Sitting = true, int CurrentBet = -1) {
+            this.Name = Name;
+            this.ID = ID;
+            this.State = State;
+            this.Cards = new List<Card>();
+            this.Chips = Chips;
+            this.Sitting = Sitting;
+            this.CurrentBet = CurrentBet;
+        }
+    }
+
+    public class GameState {
+
+        public int PrevPlayerID { get; }
+        public string PrevAction { get; }
+
+        public int PrevBet { get; }
+
+        public GameState(int PrevPlayerID = -1, string PrevAction = "None", int PrevBet = -1) {
+            this.PrevPlayerID = PrevPlayerID;
+            this.PrevAction = PrevAction;
+            this.PrevBet = PrevBet;
+        }
+    }
+
     public class Poker {
 
         static void Main(string[] args) {
@@ -270,11 +316,26 @@ namespace PokerGame {
             // Initialize game components here
             // For example, create a deck of cards, shuffle them, deal cards to players, etc.
             // Placeholder for game logic
+            int numChips = -1;
+            while (numChips == -1) {
+                //TODO: Can change chip range based on game setup
+                Console.WriteLine("Enter number of chips per player (between 500 and 10,000) or hit Enter to default to 10,000: ");
+                string? numC = Console.ReadLine();
+                if (numC == null)
+                    numChips = 10000;
+                if (numC == null || (Int32.TryParse(numC, out numChips) && numChips >= 500 && numChips <= 10000)) {
+                    Console.WriteLine("Great! We'll begin with " + numChips + " chips!");
+                }
+                else {
+                    Console.WriteLine("Sorry! That's not a valid number. Please try again!");
+                }
+            }
+
             int numPlayers = -1;
             while (numPlayers == -1) {
                 Console.WriteLine("Enter number of players (between 2 and 10): ");
                 string? numP = Console.ReadLine();
-                if (numP != null && Int32.TryParse(numP, out numPlayers)) {
+                if (numP != null && Int32.TryParse(numP, out numPlayers) && numPlayers >= 2 && numPlayers <= 10) {
                     Console.WriteLine("Great! We'll begin with " + numPlayers + " players!");
                 }
                 else {
@@ -282,12 +343,12 @@ namespace PokerGame {
                 }
             }
 
-            List<string> playerNames = new List<string>();
-            while (playerNames.Count < numPlayers) {
-                Console.WriteLine("Please enter a name for Player " + (playerNames.Count + 1) + ":");
+            List<Player> players = new List<Player>();
+            while (players.Count < numPlayers) {
+                Console.WriteLine("Please enter a name for Player " + (players.Count + 1) + ":");
                 string? pName = Console.ReadLine();
                 if (pName != null)
-                    playerNames.Add(pName);
+                    players.Add(new Player(pName, players.Count + 1, "idk yet", numChips));
                 else
                     Console.WriteLine("Sorry! That name is invalid. Please try again!");
             }
@@ -295,10 +356,22 @@ namespace PokerGame {
             Console.WriteLine("Great! Initializing game components...");
             Deck playDeck = new Deck();
             List<List<Card>> playerCards = new List<List<Card>>();
+
             //TODO: Implement betting and dealing and all that jazz
 
+            //Dealing out first two:
+            bool second = false;
+            for (int i = 0; i < players.Count; i++) {
+                players[i].Cards.Add(playDeck.Pop());
+                if (i == players.Count - 1 && !second) {
+                    second = true;
+                    i = 0;
+                }
+            }
 
-            PlayGame();
+            //Basic round loop
+            StartRound(players);
+
         }
 
         public static Hand GetBestHand(List<Card> cards) {
@@ -582,15 +655,41 @@ namespace PokerGame {
             }
         }
 
-        static void PlayGame() {
-            // Implement the game logic here
-            Console.WriteLine("Game is starting...");
-            // Example: Deal cards, evaluate hands, determine winner, etc.
+        static void StartRound(List<Player> players) {
+            // TODO: Implement the game logic for any single round here
 
-            List<Card> cards = new List<Card>() { new Card(Rank.Three, Suit.Spades), new Card(Rank.Five, Suit.Hearts), new Card(Rank.Ace, Suit.Diamonds), new Card(Rank.Seven, Suit.Spades), new Card(Rank.Six, Suit.Hearts) };
-            //Hand testHand = new Hand(cards);
-            //Console.WriteLine(string.Join(", ", testHand.GetCards()));
-            Console.WriteLine(Rank.Two - 1);
+            /*
+             * 1) Reset current bet for all players (each at a time would mess up loop arounds)
+             * 2) Player validation (hasn't folded, has chips, is turn, etc.)
+             * 2) Evaluate current state (is there a previous bet vs check/first turn, are you little blind (second time around on first round), etc)
+             * 3) Present player with options (previous check or first turn - check, raise, fold (confirmation message since dumb), previous bet not all in amount - call, raise, fold, previous bet all in amount - all in, fold)
+             * 4) Process choices (check - next player; fold - set player to out, check if game over; all in - same conditions as in raise, make sure keep all in amount aside from following bets; raise - show options (custom, double previous (if applicable), half pot, pot, all in), confirm valid amount, add chips to pot, remove from player, change current round bet amount, make round loop back to just before this player);
+             * 5) Set to next player (if next player hasn't gone yet, hasn't reacted to a bet, or is small blind on first round second time around); end round (all bets called or folded, someone has won, etc); or end game (river round is over, everyone is all in except one, everyone folded except one, etc)
+             */
+
+            int currPlayer = 1;
+            
+            void resetBets() {
+                foreach (Player player in players)
+                    player.CurrentBet = -1;
+            }
+
+            bool validatePlayer(Player player) {
+                if (player.ID != currPlayer)
+                    return false;
+                else if (!player.Sitting)
+                    return false;
+                else if (player.State == "Folded" || player.State == "All in")
+                    return false;
+                else
+                    return true;
+            }
+
+            string evaluateState() {
+                //TODO: Make a global game state class or enum to give an evaluation and check the previous state/playeraction
+                return "IDK";
+            }
+
         }
     }
 
